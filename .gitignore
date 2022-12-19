@@ -2,6 +2,7 @@
 *.log
 *.jar
 *.war
+*.out
 *.nar
 *.ear
 *.zip

@@ -3,21 +3,31 @@
 #include <stdlib.h>
 
 
+#define ROCK 'A'
+#define PAPER 'B'
+#define SCISSORS 'C'
+
+
+int R = 1;
+int P = 2;
+int S = 3;
+
+
 int score(char a, char b) {
-    if (a == 'A') {
-        if (b == 'X') return 0 + 1;
-        if (b == 'Y') return 3 + 2;
-        if (b == 'Z') return 6 + 3;
+    if (a == ROCK) {
+        if (b == 'X') return 0 + S;
+        if (b == 'Y') return 3 + R;
+        if (b == 'Z') return 6 + P;
     }
-    else if (a == 'B') {
-        if (b == 'X') return 0 + 1;
-        if (b == 'Y') return 3 + 2;
-        if (b == 'Z') return 6 + 3;
+    else if (a == PAPER) {
+        if (b == 'X') return 0 + R;
+        if (b == 'Y') return 3 + P;
+        if (b == 'Z') return 6 + S;
     }
-    else if (a == 'C') {
-        if (b == 'X') return 6 + 1;
-        if (b == 'Y') return 0 + 2;
-        if (b == 'Z') return 3 + 3;
+    else if (a == SCISSORS) {
+        if (b == 'X') return 0 + P;
+        if (b == 'Y') return 3 + S;
+        if (b == 'Z') return 6 + R;
     }
     return 0;
 }
