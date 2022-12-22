@@ -1,33 +1,31 @@
 import sys
+MAX = 100000
 
 filepath = sys.argv[1]
-
-class File:
-    def __init__(self, name, size, dir):
-        self.name = name
-        self.size = size
-        self.dir = dir
-
 class Directory:
-
-    files = []
-    parent = None
 
     def __init__(self, name, parent = None):
         self.name = name
         self.parent = parent
+        self.files = []
+        self.subdirs = {}
     
     def __repr__(self):
         return self.name
 
     def get_parent(self):
         return self.parent
+    
+    def add_file(self, size):
+        self.files.append(size)
 
+    
+dirs = {}
 
 
 l = map(lambda x: x.strip(),open(filepath).readlines())
 
-line = ''
+
 for cmd in l:
     if cmd.startswith('$'):
         op = cmd.split()
@@ -37,19 +35,34 @@ for cmd in l:
             cd = op[2]
             if cd == '/':
                 wd = Directory('/')
-                print(wd)
+                dirs['root'] = wd
             elif cd != '..':
-                line += '-'
-                wd = Directory(cd, wd)
-                print(line, end='')
-                print(wd)
+                wd = wd.subdirs[cd]
             else:
-                line = line[:-1]
-                wd = wd.get_parent()
-                print(line, end='')
-                print(wd)
+                if wd.name != '/':
+                    wd = wd.get_parent()
     
     elif cmd.startswith('dir'):
-            pass
+        _dir = cmd.split()[1]
+        dir_object = Directory(_dir, wd)
+        wd.subdirs[_dir] = dir_object
+        dirs[_dir + str(id(wd))] = dir_object 
     else:
-        pass
+        wd.add_file(int(cmd.split()[0]))
+
+
+def sum_(dr):
+    s = sum(dr.files)
+    for subdr in dr.subdirs:
+        s += sum_(dr.subdirs[subdr])
+    return s
+
+def sub_under_max():
+    total = 0
+    for v in dirs.values():
+        _ = sum_(v)
+        if _ <= MAX:
+            total += sum_(v)           
+    return total
+
+print(sub_under_max())
