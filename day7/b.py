@@ -1,5 +1,8 @@
 import sys
-MAX = 100000
+
+DISC = 70000000
+
+REQ = 30000000
 
 filepath = sys.argv[1]
 class Directory:
@@ -57,12 +60,17 @@ def sum_(dr):
         s += sum_(dr.subdirs[subdr])
     return s
 
-def sub_under_max():
-    total = 0
+
+UNUSED = DISC -  sum_(dirs['root'])
+MIN = REQ - UNUSED
+
+
+def min_max():
+    smol = float('inf')
     for v in dirs.values():
         _ = sum_(v)
-        if _ <= MAX:
-            total += sum_(v)           
-    return total
+        if _ <= smol and _ >= MIN:
+            smol = _           
+    return smol
 
-print(sub_under_max())
+print(min_max())
