@@ -8,6 +8,6 @@
 *.zip
 *.tar.gz
 *.rar
-
+__pycache__/
 *.exe
 **/*.txt
