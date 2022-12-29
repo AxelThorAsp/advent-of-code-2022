@@ -1,10 +1,11 @@
 import sys  
-from myheap import myHeap
+from myheap import Node
 
 filepath = sys.argv[1]
-lines = map(lambda x: x.strip(), open(filepath).readlines())
+fopen = open(filepath).readlines()
+lines = map(lambda x: x.strip(), fopen)
 visited = set()
-M = [[] for _ in range(5)]
+M = [[] for _ in range(len(fopen))]
 node_count = 0
 i  = 0
 for line in lines:
@@ -13,7 +14,13 @@ for line in lines:
     i += 1
 R = len(M)
 C = len(M[0])
-adj = [[] for i in range(R*C)]
+adj = [[] for _ in range(R*C)]
+
+def get_start():
+    for i in range(R):
+        for j in range(C):
+            if M[i][j] == 'S':
+                return (i,j)
 
 def num_to_coord(i):
     return (i // C, i % C)
@@ -22,11 +29,17 @@ def coord_to_num(i,j):
     return C * i + j
 
 def ok(c, n):
-    if c == 'S' or c == 'E':
-        return True
-    if n == 'S' or n == 'E':
-        return True 
-    if (ord(n) < ord(c)) or (ord(c) + 1 == ord(n)) or n == c:
+    tempc = c 
+    tempn = n 
+    if tempc == 'S':
+        tempc = 'a'
+    if tempc == 'E':
+        tempc = 'z'
+    if tempn == 'E':
+        tempn = 'z'
+    if tempn == 'S':
+        tempn = 'a'
+    if (ord(tempn) < ord(tempc)) or (ord(tempc) + 1 == ord(tempn)) or tempn == tempc:
         return True  
     return False
 
@@ -55,13 +68,35 @@ for i in range(R):
     for j in range(C):
         check_dirs(i,j)
 
-pq = myHeap()
 
-for n in range(R * C):
-    pq.add_task(n, 99999)
+nodes = [Node(i,9999) for i in range(R * C)]
 
-pq.add_task(0,0)
+for n in nodes:
+    for nbor in adj[n._id]:
+        n.nbors.append(nodes[nbor])
 
-for n in range(R * C):
-    for _n in adj[n]:
-        pq.add_task((_n, n))
+
+si, sj = get_start()
+
+nodes[coord_to_num(si,sj)].dist=0
+nodes.sort()
+done = []
+while len(nodes):
+    curr = nodes.pop(0)
+    done.append(curr)
+    for nbor in curr.nbors:
+        if nbor in nodes:
+            if nbor.dist > curr.dist + 1:
+                nbor.dist = curr.dist + 1
+    nodes.sort()
+
+d = {n._id : n for n in done}
+
+
+def end():
+    for i in range(R):
+        for j in range(C):
+            if M[i][j] == 'E':
+                return (i,j)
+
+print(d[coord_to_num(end()[0],end()[1])].dist)

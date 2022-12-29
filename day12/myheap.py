@@ -1,49 +1,29 @@
-from heapq import heappush, heappop
-import itertools
-
-class myHeap:
-    def __init__(self) -> None: 
-        self.pq = []                        
-        self.entry_finder = {}              
-        self.REMOVED = '<removed-task>'     
-        self.counter = itertools.count()    
+from functools import total_ordering
+@total_ordering
+class Node():
+    def __init__(self, _id, dist, src = None):
+        self._id = _id 
+        self.dist = dist 
+        self.src = src
+        self.nbors = [] 
     
-    def add_task(self, task, priority=0) -> None:
-        'Add a new task or update the priority of an existing task'
-        if task in self.entry_finder:
-            self.remove_task(task)
-        count = next(self.counter)
-        entry = [priority, count, task]
-        self.entry_finder[task] = entry
-        heappush(self.pq, entry)
+    def __lt__(self, obj: object):
+        return ((self.dist) < (obj.dist))
     
-    def remove_task(self,task) -> None:
-        'Mark an existing task as REMOVED.  Raise KeyError if not found.'
-        entry = self.entry_finder.pop(task)
-        entry[-1] = self.REMOVED
+    def __gt__(self, obj):
+        return ((self.dist) > (obj.dist))
     
-    def pop_task(self) -> object:
-        'Remove and return the lowest priority task. Raise KeyError if empty.'
-        while self.pq:
-            priority, count, task = heappop(self.pq)
-            if task is not self.REMOVED:
-                del self.entry_finder[task]
-                return task
-        raise KeyError('pop from an empty priority queue')
-
-    def is_empty(self) -> bool:
-        return len(self.entry_finder) == 0
-
-    def __repr__(self) -> str:
-        return str(self.pq)
-
-def test():
-    pq = myHeap()
-    pq.add_task('A', 1)
-    pq.add_task('B', 2)
-    pq.add_task('A', 3)
-    print(pq.entry_finder)
-    print(pq.pq)
-    print(pq.is_empty())
-
-test()
+    def __le__(self, obj):
+        return ((self.dist) <= (obj.dist))
+    
+    def __ge__(self, obj):
+        return ((self.dist) >= (obj.dist)) 
+    
+    def __eq__(self, obj):
+        return ((self.dist) == (obj.dist))
+    
+    def __hash__(self):
+        return int(self._id) 
+    
+    def __repr__(self):
+        return "(" + str(self._id) + ", " + str(self.dist)+ ")"
